@@ -6,6 +6,11 @@
 
 cmake_minimum_required( VERSION 3.7 )
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
+option(CPU_ONLY "Builds only the cpu portion of the code." OFF)
+
+if( CPU_ONLY )
+  add_definitions(-DWITH_CPU_ONLY)
+endif()
 
 if( NOT PROJECT_NAME )
   project( Gpufit VERSION 1.0.2 )
@@ -97,7 +102,9 @@ add_subdirectory( Cpufit )
 
 # Gpufit
 
-add_subdirectory( Gpufit )
+if( NOT CPU_ONLY )
+  add_subdirectory( Gpufit )
+endif()
 
 # Examples using Gpufit and Cpufit
 

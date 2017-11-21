@@ -15,6 +15,11 @@ function( add_example modules name )
 #  install( TARGETS ${target} RUNTIME DESTINATION bin )
 endfunction()
 
-add_example( "Cpufit;Gpufit" Gpufit_Cpufit_Performance_Comparison )
+if( CPU_ONLY )
+  add_example( "Cpufit;" Gpufit_Cpufit_Performance_Comparison )
+  add_example( "Cpufit;" Gpufit_Cpufit_Nvidia_Profiler_Test )
+else()
+  add_example( "Cpufit;Gpufit" Gpufit_Cpufit_Performance_Comparison )
+  add_example( "Cpufit;Gpufit" Gpufit_Cpufit_Nvidia_Profiler_Test )
+endif()
 
-add_example( "Cpufit;Gpufit" Gpufit_Cpufit_Nvidia_Profiler_Test )

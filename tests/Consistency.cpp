@@ -1,7 +1,11 @@
 #define BOOST_TEST_MODULE Gpufit
 
 #include "Cpufit/cpufit.h"
-#include "Gpufit/gpufit.h"
+
+#ifndef WITH_CPU_ONLY
+  #include "Gpufit/gpufit.h"
+#endif
+
 #include "Tests/utils.h"
 
 #include <boost/test/included/unit_test.hpp>
@@ -171,6 +175,7 @@ void perform_cpufit_gpufit_and_check(void (*func)(FitInput &))
 
 	BOOST_CHECK(cpu_status == 0);
 
+#ifndef WITH_CPU_ONLY
 	// call to gpufit, store output
 	int const gpu_status
 		= gpufit
@@ -201,6 +206,8 @@ void perform_cpufit_gpufit_and_check(void (*func)(FitInput &))
 	BOOST_CHECK(close_or_equal(cpu.parameters, gpu.parameters));
 	BOOST_CHECK(close_or_equal(cpu.chi_squares, gpu.chi_squares));
 
+#endif
+	
 }
 
 BOOST_AUTO_TEST_CASE( Consistency )

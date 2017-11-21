@@ -4,7 +4,11 @@
  */
 
 #include "Cpufit/cpufit.h"
-#include "Gpufit/gpufit.h"
+
+#ifndef WITH_CPU_ONLY
+  #include "Gpufit/gpufit.h"
+#endif
+
 #include "Tests/utils.h"
 
 #include <stdexcept>
@@ -204,12 +208,14 @@ No weights, Model: Gauss_2D, Estimator: LSE
 */
 int main(int argc, char * argv[])
 {
+#ifndef WITH_CPU_ONLY	
 	// check for CUDA availability
 	if (!gpufit_cuda_available())
 	{
 		std::cout << "CUDA not available" << std::endl;
 		return -1;
 	}
+#endif
 
 	// all numbers of fits
 	std::size_t const n_fits_gpu = 2000000;
@@ -290,6 +296,7 @@ int main(int argc, char * argv[])
 		print_result("Cpufit", cpufit_parameters, test_parameters, cpufit_states, cpufit_n_iterations, n_fits_cpu, n_parameters, dt_cpufit);
 	}
 
+#ifndef WITH_CPU_ONLY
     std::cout << std::endl;
     std::cout << n_fits_gpu << " fits on the GPU" << std::endl;
 
@@ -335,6 +342,8 @@ int main(int argc, char * argv[])
 	}
 
     std::cout << "\nPERFORMANCE GAIN Gpufit/Cpufit \t" << std::setw(10) << static_cast<double>(dt_cpufit) / dt_gpufit * n_fits_gpu / n_fits_cpu << std::endl;
+
+#endif
 
 	return 0;
 }

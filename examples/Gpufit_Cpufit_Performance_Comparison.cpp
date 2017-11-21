@@ -1,5 +1,9 @@
 #include "Cpufit/cpufit.h"
-#include "Gpufit/gpufit.h"
+
+#ifndef WITH_CPU_ONLY
+  #include "Gpufit/gpufit.h"
+#endif
+
 #include "Tests/utils.h"
 
 #include <stdexcept>
@@ -217,7 +221,11 @@ int main(int argc, char * argv[])
 
 
     // check for CUDA availability
+    bool do_gpufits = false;
+
+#ifndef WITH_CPU_ONLY
 	bool const cuda_available = gpufit_cuda_available() != 0;
+
 	if (!gpufit_cuda_available())
 	{
 		std::cout << "CUDA not available" << std::endl;
@@ -232,7 +240,6 @@ int main(int argc, char * argv[])
     int const cuda_driver_major = cuda_driver_version / 1000;
     int const cuda_driver_minor = cuda_driver_version % 1000 / 10;
 
-    bool do_gpufits = false;
     if (cuda_available & version_available)
     {
         std::cout << "CUDA runtime version: ";
@@ -272,6 +279,9 @@ int main(int argc, char * argv[])
         std::cout << gpufit_get_last_error() << std::endl;
         std::cout << std::endl;
     }
+	
+#endif
+
     if (!do_gpufits)
     {
         std::cout << "Skipping Gpufit computations." << std::endl << std::endl;
@@ -382,6 +392,7 @@ int main(int argc, char * argv[])
         // if we do not do gpufit, we skip the rest of the loop
         if (do_gpufits)
         {
+#ifndef WITH_CPU_ONLY			
             // Gpufit output parameters
             std::vector<float> gpufit_parameters(n_fits * n_parameters);
             std::vector<int> gpufit_states(n_fits);
@@ -418,6 +429,7 @@ int main(int argc, char * argv[])
                 std::cout << "Error in gpufit: " << gpufit_get_last_error() << std::endl;
                 do_gpufits = false;
             }
+#endif
         }
 
         // print the calculation speed in fits/s
